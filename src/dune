@@ -1,0 +1,9 @@
+(library
+ (name bindoj_template)
+ (public_name bindoj-template)
+ (libraries kxclib))
+
+(rule
+ (target types.ml)
+ (action (with-stdout-to %{target} (run %{exe:../decls/gen.exe} %{target})))
+ (mode (promote (until-clean))))

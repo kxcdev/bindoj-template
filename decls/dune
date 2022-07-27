@@ -1,0 +1,6 @@
+(executable
+ (name gen)
+ (libraries
+  bindoj.base bindoj.gen
+  ppxlib)
+ (preprocess (pps ppxlib.metaquot)))
