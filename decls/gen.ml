@@ -17,13 +17,11 @@ let () =
   let open Bindoj_gen.Json_codec in
   let student =
     gen_structure
-      ~refl:false
       ~generators:[gen_json_codec ~self_contained:true]
       student
   in
   let person =
     gen_structure
-      ~refl:false
       ~generators:[gen_json_codec ~self_contained:true]
       person
   in

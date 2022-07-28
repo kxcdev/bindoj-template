@@ -16,7 +16,7 @@
   "KXC Members and Contributors")
 
 (source
- (github kxcteam/bindoj))
+ (github kxcdev/bindoj))
 
 (generate_opam_files true)
 

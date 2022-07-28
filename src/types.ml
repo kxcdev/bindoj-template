@@ -1,6 +1,27 @@
 type student = {
   admission_year: int ;
   name: string }
+let rec (student_reflect : _ Bindoj_runtime.Refl.t) =
+  lazy
+    (let open Bindoj_runtime in
+       let open Kxclib.Option.Ops_monad in
+         Refl.Record
+           {
+             get =
+               (fun { admission_year; name } ->
+                  StringMap.of_list
+                    [("admission_year", (Expr.of_int admission_year));
+                    ("name", (Expr.of_string name))]);
+             mk =
+               (fun xs ->
+                  ((xs |> (StringMap.find_opt "admission_year")) >>=
+                     Expr.to_int)
+                    >>=
+                    (fun admission_year ->
+                       ((xs |> (StringMap.find_opt "name")) >>=
+                          Expr.to_string)
+                         >>= (fun name -> Some { admission_year; name })))
+           })[@@warning "-33-39"]
 let rec student_to_json =
   (let string_to_json (x : string) = (`str x : Kxclib.Json.jv)
    and int_to_json (x : int) = (`num (float_of_int x) : Kxclib.Json.jv) in
@@ -26,6 +47,35 @@ and student_of_json =
 type person =
   | Anonymous 
   | Student of student 
+let rec (person_reflect : _ Bindoj_runtime.Refl.t) =
+  lazy
+    (let open Bindoj_runtime in
+       let open Kxclib.Option.Ops_monad in
+         let ctor_Anonymous = Refl.NoParam { value = Anonymous } in
+         let ctor_Student =
+           Refl.TupleLike
+             {
+               get =
+                 (function
+                  | Student x -> [(Expr.of_refl student_reflect) x]
+                  | _ -> invalid_arg ("Student" ^ " is expected"));
+               mk =
+                 (function
+                  | x::[] ->
+                      ((Expr.to_refl student_reflect) x) |>
+                        (Option.map (fun x -> Student x))
+                  | _ -> None)
+             } in
+         Refl.Variant
+           {
+             constructors =
+               (StringMap.of_list
+                  [("Anonymous", ctor_Anonymous); ("Student", ctor_Student)]);
+             classify =
+               (function
+                | Anonymous -> ("Anonymous", ctor_Anonymous)
+                | Student _ -> ("Student", ctor_Student))
+           })[@@warning "-33-39"]
 let rec person_to_json =
   (function
    | Anonymous -> `obj [("kind", (`str "Anonymous"))]

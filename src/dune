@@ -1,7 +1,7 @@
 (library
  (name bindoj_template)
  (public_name bindoj-template)
- (libraries kxclib))
+ (libraries kxclib bindoj.runtime))
 
 (rule
  (target types.ml)
