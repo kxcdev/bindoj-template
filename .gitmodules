@@ -1,4 +1,4 @@
 [submodule "vendors/bindoj"]
 	path = vendors/bindoj
-  url = git@github.com:kxcteam/bindoj.git
+  url = git@github.com:kxcdev/bindoj.git
 
